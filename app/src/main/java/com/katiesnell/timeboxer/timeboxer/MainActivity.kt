@@ -3,6 +3,7 @@ package com.katiesnell.timeboxer.timeboxer
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -22,20 +23,76 @@ class MainActivity : AppCompatActivity() {
     internal val initialCountDown: Long = 10000
     internal val countdownInterval: Long = 1000
 
+    internal val TAG = MainActivity::class.java.simpleName
+
+    internal var timeLeftOnTimer: Long = 10000
+
+    companion object {
+        private val SCORE_KEY = "SCORE_KEY"
+        private val TIME_LEFT_KEY = "TIME_LEFT_KEY"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Log.d(TAG, "onCreate called, score is $score")
 
         tapMeButton = findViewById<Button>(R.id.tap_me_button)
         gameScoreTextView = findViewById<TextView>(R.id.game_score_text_view)
         timeLeftTextView = findViewById<TextView>(R.id.time_left_text_view)
 
-        resetGame()
+        if (savedInstanceState != null) {
+            score = savedInstanceState.getInt(SCORE_KEY)
+            timeLeftOnTimer = savedInstanceState.getLong(TIME_LEFT_KEY)
+            restoreGame()
+        } else {
+            resetGame()
+        }
 
         tapMeButton.setOnClickListener {
             view ->
             incrementScore()
         }
+    }
+
+    private fun restoreGame() {
+        gameScoreTextView.text = getString(R.string.your_score, score.toString())
+        val restoredTime = timeLeftOnTimer / 1000
+        // Similar to other method but we use restoredTime instead
+        timeLeftTextView.text = getString(R.string.time_left, restoredTime.toString())
+
+        countDownTimer = object: CountDownTimer(timeLeftOnTimer, countdownInterval) {
+            override fun onTick(msUntilFinished: Long) {
+                timeLeftOnTimer = msUntilFinished
+                var timeLeft = msUntilFinished / 1000
+                timeLeftTextView.text = getString(R.string.time_left, timeLeft.toString())
+            }
+
+            override fun onFinish() {
+                endGame()
+            }
+        }
+
+        countDownTimer.start()
+        gameStarted = true
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // Save the current values of our variables
+        outState.putInt(SCORE_KEY, score)
+        outState.putLong(TIME_LEFT_KEY, timeLeftOnTimer)
+        countDownTimer.cancel()
+
+        Log.d(TAG, "onSaveInstanceState called, saving  score $score and time left $timeLeftOnTimer ")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        Log.d(TAG, "onDestroy called")
     }
 
     private fun resetGame() {
@@ -49,6 +106,7 @@ class MainActivity : AppCompatActivity() {
         // Create an instance of countDownTimer
         countDownTimer = object: CountDownTimer(initialCountDown, countdownInterval) {
             override fun onTick(msUntilFinished: Long) {
+                timeLeftOnTimer = msUntilFinished
                 val timeLeft = msUntilFinished / 1000
                 timeLeftTextView.text = getString(R.string.time_left, timeLeft.toString())
             }
