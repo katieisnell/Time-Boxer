@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Time Boxer</string>
+    <string name="app_name">TIME BOXER</string>
     <string name="your_score">Your score: %s</string>
     <string name="time_left">Time left: %s</string>
     <string name="tap_me">Tap me</string>
