@@ -157,7 +157,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun endGame() {
-        Toast.makeText(this, getString(R.string.game_over_message, score.toString()), Toast.LENGTH_LONG).show()
+        val dialogMessage = getString(R.string.game_over_message, score.toString())
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(dialogMessage)
+        builder.create().show()
         resetGame()
     }
 
