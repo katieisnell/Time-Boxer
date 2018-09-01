@@ -4,4 +4,7 @@
     <string name="time_left">Time left: %s</string>
     <string name="tap_me">Tap me</string>
     <string name="game_over_message">Time is up! Your score is %s ^.^</string>
+    <string name="about_menu">About</string>
+    <string name="about_title"> TIME BOXER v%s</string>
+    <string name="about_message">Made by Katie ^-^ \nSee more at github.com/katieisnell</string>
 </resources>
