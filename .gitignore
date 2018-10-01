@@ -25,3 +25,9 @@ hs_err_pid*
 # IDE files 
 .idea
 build/*
+
+# Local properties
+local.properties
+
+# Gradle files
+.gradle/*
